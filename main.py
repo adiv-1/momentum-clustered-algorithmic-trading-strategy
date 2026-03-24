@@ -12,6 +12,7 @@ Orchestrates the full pipeline:
   8. Output images and a performance metrics table
 """
 
+import os
 import warnings
 
 import numpy as np
@@ -48,6 +49,8 @@ from src.visualization.plots import (
 
 
 def main():
+    os.makedirs('final_output', exist_ok=True)
+
     # ------------------------------------------------------------------ #
     # 1. Universe and raw price data                                       #
     # ------------------------------------------------------------------ #
@@ -85,7 +88,7 @@ def main():
     data = apply_kmeans_clustering(data)
 
     print('       Saving cluster visualization...')
-    plot_cluster_visualization(data, output_path='cluster_visualization.png', plot_limit=5)
+    plot_cluster_visualization(data, output_path='final_output/cluster_visualization.png', plot_limit=5)
 
     print('       Selecting high-momentum cluster (RSI ~ 80)...')
     fixed_dates = select_momentum_cluster(data, cluster_id=3)
@@ -155,8 +158,8 @@ def main():
     # ------------------------------------------------------------------ #
     # 8. Save output images                                                #
     # ------------------------------------------------------------------ #
-    plot_unsupervised_returns(portfolio_df2, output_path='unsupervised_strategy.png')
-    plot_strategy_comparison(cumulative_returns, output_path='strategy_comparison.png')
+    plot_unsupervised_returns(portfolio_df2, output_path='final_output/unsupervised_strategy.png')
+    plot_strategy_comparison(cumulative_returns, output_path='final_output/strategy_comparison.png')
 
     # ------------------------------------------------------------------ #
     # 9. Performance metrics                                               #
@@ -170,15 +173,15 @@ def main():
     }
 
     metrics = compute_metrics(cumulative_returns, return_series_map)
-    metrics.to_csv('performance_metrics.csv')
+    metrics.to_csv('final_output/performance_metrics.csv')
 
     print('\n=== Performance Metrics ===')
     print(metrics.to_string())
-    print('\nOutput files:')
-    print('  cluster_visualization.png')
-    print('  unsupervised_strategy.png')
-    print('  strategy_comparison.png')
-    print('  performance_metrics.csv')
+    print('\nOutput files saved to final_output/:')
+    print('  final_output/cluster_visualization.png')
+    print('  final_output/unsupervised_strategy.png')
+    print('  final_output/strategy_comparison.png')
+    print('  final_output/performance_metrics.csv')
 
 
 if __name__ == '__main__':

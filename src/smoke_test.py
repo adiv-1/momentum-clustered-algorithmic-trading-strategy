@@ -1,6 +1,9 @@
 """Quick smoke test — 30 stocks, 6 years, no LSTM."""
+import os
 import warnings
 warnings.filterwarnings('ignore')
+
+os.makedirs('final_output', exist_ok=True)
 
 import numpy as np
 import pandas as pd
@@ -49,7 +52,7 @@ print('[5] K-Means clustering...')
 data = apply_kmeans_clustering(data)
 print('    cluster distribution:')
 print(data['cluster'].value_counts().to_string())
-plot_cluster_visualization(data, output_path='cluster_visualization.png', plot_limit=5)
+plot_cluster_visualization(data, output_path='final_output/cluster_visualization.png', plot_limit=5)
 
 print('[6] Momentum cluster selection...')
 fixed_dates = select_momentum_cluster(data, cluster_id=3)
@@ -99,8 +102,8 @@ cumulative_returns['Exp Smoothing'] = (
 )
 
 print('[9] Saving plots...')
-plot_unsupervised_returns(portfolio_df2, output_path='unsupervised_strategy.png')
-plot_strategy_comparison(cumulative_returns, output_path='strategy_comparison.png')
+plot_unsupervised_returns(portfolio_df2, output_path='final_output/unsupervised_strategy.png')
+plot_strategy_comparison(cumulative_returns, output_path='final_output/strategy_comparison.png')
 
 return_series_map = {
     'Unsupervised Learning': portfolio_df2.loc[common_index, 'Strategy Return'],
@@ -109,7 +112,7 @@ return_series_map = {
     'Exp Smoothing': exp_signals.loc[common_index, 'strategy_returns'],
 }
 metrics = compute_metrics(cumulative_returns, return_series_map)
-metrics.to_csv('performance_metrics.csv')
+metrics.to_csv('final_output/performance_metrics.csv')
 
 print('\n=== Performance Metrics ===')
 print(metrics.to_string())
